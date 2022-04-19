@@ -4,6 +4,7 @@ const colors = require('colors');
 const {errorHandler} = require('./middleware/errorMiddleware')
 const connectDB = require('./config/db')
 const dotenv = require('dotenv').config()
+const ticketRoutes = require('./routes/ticketRoutes')
 
 const app = express();
 
@@ -20,6 +21,7 @@ app.get('/', (req,res) => {
 })
 
 app.use('/api/users', userRoutes);
+app.use('/api/tickets', ticketRoutes);
 
 app.use(errorHandler)
 
