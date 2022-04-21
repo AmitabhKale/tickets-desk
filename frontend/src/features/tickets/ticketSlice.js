@@ -56,6 +56,10 @@ export const ticketSlice = createSlice({
                 state.isError = true
                 state.message = action.payload
             })
+            .addCase(closeTicket.fulfilled, (state,action) => {
+                state.isLoading = false
+                state.tickets.map((ticket) => ticket._id === action.payload._id ? (ticket.status = 'closed') : ticket)
+            })
     }
 })
 
@@ -102,6 +106,23 @@ export const getTicket = createAsyncThunk(
         try {
             const token = thunkAPI.getState().auth.user.token
             return await ticketService.getTicket(ticketId, token)
+        } catch (error) {
+            const message = (error.response && error.response.data && error.response.data.message) 
+            || error.message 
+            || error.toString()
+            
+            return thunkAPI.rejectWithValue(message);
+        }
+    }
+)
+
+// CloseTicket
+export const closeTicket = createAsyncThunk(
+    'tickets/close',
+    async (ticketId, thunkAPI) => {
+        try {
+            const token = thunkAPI.getState().auth.user.token
+            return await ticketService.closeTicket(ticketId, token)
         } catch (error) {
             const message = (error.response && error.response.data && error.response.data.message) 
             || error.message 
